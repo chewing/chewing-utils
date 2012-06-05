@@ -593,30 +593,31 @@ file_save_txt( gchar *fname )
     file = fopen( fname, "w" );
 
   fprintf(file,"%-125s", "0");
-  gtk_tree_model_get_iter_first( GTK_TREE_MODEL(store), &iter);
-  do {
-    gtk_tree_model_get (GTK_TREE_MODEL(store), &iter,
-			SEQ_COLUMN, &buffer,
-			ZUIN_COLUMN, &zuin,
-			USERFREQ_COLUMN, &userfreq,
-			TIME_COLUMN, &time,
-			MAXFREQ_COLUMN, &maxfreq,
-			ORIGFREQ_COLUMN, &origfreq,
-			-1);
-    convertu2b(buffer, bbuf, 125);
-    sprintf(str,"%s ", bbuf);
-    pos = strtok(zuin, " "); 
-    while( pos != NULL ) {
-      sprintf(buf, "%d ", zhuin_to_inx(pos));
-      strcat(str, buf);
-      pos = strtok(NULL, " ");
-    }
-    sprintf( buf, "%d %d %d %d", userfreq, time, maxfreq, origfreq );
-    strcat(str, buf);
-    fprintf(file,"%-125s", str);
-    g_free(buffer);
-    g_free(zuin);
-  } while( gtk_tree_model_iter_next( GTK_TREE_MODEL(store), &iter ) );
+  if (gtk_tree_model_get_iter_first( GTK_TREE_MODEL(store), &iter)) {
+	  do {
+		 gtk_tree_model_get (GTK_TREE_MODEL(store), &iter,
+				SEQ_COLUMN, &buffer,
+				ZUIN_COLUMN, &zuin,
+				USERFREQ_COLUMN, &userfreq,
+				TIME_COLUMN, &time,
+				MAXFREQ_COLUMN, &maxfreq,
+				ORIGFREQ_COLUMN, &origfreq,
+				-1);
+		 convertu2b(buffer, bbuf, 125);
+		 sprintf(str,"%s ", bbuf);
+		 pos = strtok(zuin, " "); 
+		 while( pos != NULL ) {
+			sprintf(buf, "%d ", zhuin_to_inx(pos));
+			strcat(str, buf);
+			pos = strtok(NULL, " ");
+		 }
+		 sprintf( buf, "%d %d %d %d", userfreq, time, maxfreq, origfreq );
+		 strcat(str, buf);
+		 fprintf(file,"%-125s", str);
+		 g_free(buffer);
+		 g_free(zuin);
+	  } while( gtk_tree_model_iter_next( GTK_TREE_MODEL(store), &iter ) );
+  }
   fclose(file);
 }
 
@@ -643,49 +644,50 @@ file_save_bin( gchar *fname )
   fwrite(BIN_HASH_SIG, strlen(BIN_HASH_SIG), 1, file);
   fwrite(&chewing_lifetime, sizeof(uint32_t), 1, file); /* TODO: the value of chewing_lifetime */
 
-  gtk_tree_model_get_iter_first( GTK_TREE_MODEL(store), &iter);
-  do {
-    char writebuf[FIELD_SIZE] = {};
-    gtk_tree_model_get (GTK_TREE_MODEL(store), &iter,
-			SEQ_COLUMN, &buffer,
-			ZUIN_COLUMN, &zuin,
-			USERFREQ_COLUMN, &userfreq,
-			TIME_COLUMN, &time,
-			MAXFREQ_COLUMN, &maxfreq,
-			ORIGFREQ_COLUMN, &origfreq,
-			-1);
+  if (gtk_tree_model_get_iter_first( GTK_TREE_MODEL(store), &iter)) {
+	  do {
+		 char writebuf[FIELD_SIZE] = {};
+		 gtk_tree_model_get (GTK_TREE_MODEL(store), &iter,
+				SEQ_COLUMN, &buffer,
+				ZUIN_COLUMN, &zuin,
+				USERFREQ_COLUMN, &userfreq,
+				TIME_COLUMN, &time,
+				MAXFREQ_COLUMN, &maxfreq,
+				ORIGFREQ_COLUMN, &origfreq,
+				-1);
 
-    /* frequency info */
-	 *(uint32_t*)(writebuf + 0)  = userfreq;
-    *(uint32_t*)(writebuf + 4)  = time;
-	 *(uint32_t*)(writebuf + 8)  = maxfreq;
-	 *(uint32_t*)(writebuf + 12) = origfreq;
+		 /* frequency info */
+		 *(uint32_t*)(writebuf + 0)  = userfreq;
+		 *(uint32_t*)(writebuf + 4)  = time;
+		 *(uint32_t*)(writebuf + 8)  = maxfreq;
+		 *(uint32_t*)(writebuf + 12) = origfreq;
 
-    /* phone seq */
-	 phrase_length = chewing_utf8_strlen(buffer);
-	 writebuf[16] = phrase_length;
-	 pshort = (uint16_t*)(writebuf + 17);
-	 pos = strtok(zuin, " ");
-	 for (i=0; i<phrase_length && pos != NULL; i++) {
-	   /* TODO: check for errors, phrase length may differ from zhuin length */
-		*pshort = zhuin_to_inx(pos);
-		pos = strtok(NULL, " ");
-		++pshort;
-	 }
+		 /* phone seq */
+		 phrase_length = chewing_utf8_strlen(buffer);
+		 writebuf[16] = phrase_length;
+		 pshort = (uint16_t*)(writebuf + 17);
+		 pos = strtok(zuin, " ");
+		 for (i=0; i<phrase_length && pos != NULL; i++) {
+			/* TODO: check for errors, phrase length may differ from zhuin length */
+			*pshort = zhuin_to_inx(pos);
+			pos = strtok(NULL, " ");
+			++pshort;
+		 }
 
-	 /* phrase length in bytes */
-	 
-	 string_length = strlen(buffer);
-	 pchar = (uint8_t*)pshort;
-	 *pchar = string_length;
-	 memcpy(pchar+1, buffer, string_length);
+		 /* phrase length in bytes */
+		 
+		 string_length = strlen(buffer);
+		 pchar = (uint8_t*)pshort;
+		 *pchar = string_length;
+		 memcpy(pchar+1, buffer, string_length);
 
-	 /* write to file */
-	 fwrite(writebuf, sizeof(writebuf), 1, file);
+		 /* write to file */
+		 fwrite(writebuf, sizeof(writebuf), 1, file);
 
-    g_free(buffer);
-    g_free(zuin);
-  } while( gtk_tree_model_iter_next( GTK_TREE_MODEL(store), &iter ) );
+		 g_free(buffer);
+		 g_free(zuin);
+	  } while( gtk_tree_model_iter_next( GTK_TREE_MODEL(store), &iter ) );
+  }
   fclose(file);
 }
 
@@ -803,6 +805,31 @@ che_remove_phrase(GtkWidget *widget)
     valid = gtk_tree_store_remove(store, &iter);
   if (valid)
     gtk_tree_selection_select_iter(selection, &iter); /* select the next item */
+}
+
+void
+che_select_prev_phrase()
+{
+	GtkTreePath *path;
+	path = gtk_tree_model_get_path(GTK_TREE_MODEL(store), &iter);
+	if (path && gtk_tree_path_prev(path)) {
+		gtk_tree_model_get_iter(store, &iter, path);
+		gtk_tree_selection_select_iter(selection, &iter);
+	}
+	gtk_tree_path_free(path);
+}
+
+void
+che_select_next_phrase()
+{
+	gboolean valid = gtk_tree_selection_get_selected(selection,
+				  NULL,
+				  &iter);
+	if (valid) {
+		valid = gtk_tree_model_iter_next(GTK_TREE_MODEL(store), &iter);
+		if (valid)
+			gtk_tree_selection_select_iter(selection, &iter); /* select the next item */
+	}
 }
 
 void
@@ -1160,6 +1187,12 @@ treeview_keypress_callback(GtkWidget *widget, GdkEvent *event, gpointer data)
 		switch (event->key.keyval) {
 		case GDK_Delete:
 			che_remove_phrase(widget);
+			break;
+		case GDK_Up: /* select previous phrase */
+			che_select_prev_phrase();
+			break;
+		case GDK_Down: /* select next phrase */
+			che_select_next_phrase();
 			break;
 		}
 	}

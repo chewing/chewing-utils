@@ -37,6 +37,8 @@ GtkWidget *che_create_tree( GtkWindow* );
 GtkWidget *che_create_menu( GtkWindow* );
 void che_read_hash(gchar *filename);
 void convert(char*, char*, int);
+void che_select_prev_phrase();
+void che_select_next_phrase();
 
 struct zhuindict *zhuin_dictionary;
 
