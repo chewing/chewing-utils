@@ -33,7 +33,7 @@ int main(int argc, char *argv[])
 
   main_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
   g_signal_connect (G_OBJECT (main_window), "delete_event",
-		    G_CALLBACK (gtk_main_quit), NULL);
+		    G_CALLBACK (che_quit), NULL);
   gtk_window_set_default_size(GTK_WINDOW(main_window), 500, 400);
   vbox = gtk_vbox_new(FALSE, 5);
   gtk_container_add(GTK_CONTAINER(main_window), vbox);
@@ -217,7 +217,7 @@ che_create_menu( GtkWindow *parient )
   separate = gtk_separator_menu_item_new();
   gtk_menu_shell_append (GTK_MENU_SHELL (file_menu), separate);
   file_menu_quit = gtk_image_menu_item_new_from_stock (GTK_STOCK_QUIT, NULL);
-  g_signal_connect (G_OBJECT (file_menu_quit), "activate", G_CALLBACK (gtk_main_quit), NULL);
+  g_signal_connect (G_OBJECT (file_menu_quit), "activate", G_CALLBACK (che_quit), NULL);
   gtk_menu_shell_append (GTK_MENU_SHELL (file_menu), file_menu_quit);
 
   edit_menu = gtk_menu_new();
@@ -519,6 +519,13 @@ che_import_txt(gchar *filename)
     }
 	
   fclose(file);
+}
+
+void
+che_quit(GtkWindow *ptr /* reserved */)
+{
+	file_save(NULL);
+	gtk_main_quit();
 }
 
 /* callback */

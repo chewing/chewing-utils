@@ -45,6 +45,7 @@ gchar prev_search_text[0xff] = {};
 uint32_t chewing_lifetime = 0;
 
 /* callback */
+void che_quit(GtkWindow*);
 void file_open( GtkWindow* );
 void file_save_as( GtkWindow* );
 void file_save( gchar* );
