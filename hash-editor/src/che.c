@@ -1,6 +1,21 @@
 #include "che.h"
+#include <stdio.h>
+#include <string.h>
 
 GtkWidget *main_window;
+
+const char *get_hash_filename()
+{
+	static char *filename = NULL;
+	const char hashfile[] = "/.chewing/uhash.dat";
+	if (!filename) {
+		const char *home = getenv("HOME");
+		filename = malloc(strlen(home) + sizeof(hashfile) + 1);
+		strcpy(filename, home);
+		strcat(filename, hashfile);
+	}
+	return filename;
+}
 
 int main(int argc, char *argv[])
 {
@@ -42,7 +57,7 @@ int main(int argc, char *argv[])
   if (argc >= 2)
     che_read_hash(argv[1]);
   else
-    file_open(main_window);
+    che_read_hash(get_hash_filename());
 
   gtk_widget_show_all( main_window );
   gtk_main();
