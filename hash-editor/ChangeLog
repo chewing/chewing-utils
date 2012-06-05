@@ -1,0 +1,15 @@
+2012-05-03 Timothy Lin <lzh9102@gmail.com>
+	+ import/export text files that can be processed by other tools
+
+2012-02-07  Timothy Lin <lzh9102@gmail.com>
+	Improvements to the editor.
+	+ read/write binary hash files that are compatible with libchewing 0.3.x
+	+ can now edit existing phrases
+	+ auto insert zhuin when adding new phrases
+	+ search in phrases
+	+ added accelerators to operations
+	+ disable reading/writing of text hash files (can be enabled by defining ENABLE_TEXT_HASH)
+
+2005-07-04  Kanru Chen  <kanru.96@stu.csie.ncnu.edu.tw>
+	Initial release of chewing hash editor.
+	+ basic add, remove, edit method.
