@@ -60,6 +60,9 @@ int main(int argc, char *argv[])
         file_open(main_window);
       }
     }
+    else {
+      file_open(main_window);
+    }
     che_read_hash(hashfilename);
     g_free(hashfilename);
   }
