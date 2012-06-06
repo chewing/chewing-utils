@@ -1,5 +1,12 @@
 #include "che.h"
 
+/* FIXME: use portable description */
+#define CHEWING_HASH_PATH ".chewing"
+#define PLAT_SEPARATOR "/"
+#define HASH_FILE  "uhash.dat"
+
+static char *hashfilename;
+
 GtkWidget *main_window;
 
 int main(int argc, char *argv[])
@@ -39,10 +46,23 @@ int main(int argc, char *argv[])
 
   is_file_saved = FALSE;
 
-  if (argc >= 2)
+  if (argc > 1)
     che_read_hash(argv[1]);
-  else
-    file_open(main_window);
+  else {
+    if (getenv("HOME")) {
+      hashfilename = g_strdup_printf("%s%s", getenv("HOME"),
+                         PLAT_SEPARATOR CHEWING_HASH_PATH
+                         PLAT_SEPARATOR HASH_FILE);
+      /* writable uhash? */
+      if (access(hashfilename, W_OK) != 0) {
+        /* specify another uhash */
+        g_free(hashfilename);
+        file_open(main_window);
+      }
+    }
+    che_read_hash(hashfilename);
+    g_free(hashfilename);
+  }
 
   gtk_widget_show_all( main_window );
   gtk_main();
@@ -522,11 +542,8 @@ file_open( GtkWindow *parient )
 
   if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT)
     {
-	   gchar *filename;
       gtk_tree_store_clear( store );
-      filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
-      che_read_hash(filename);
-		g_free(filename);
+      hashfilename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
     }
 
   gtk_widget_destroy (dialog);
