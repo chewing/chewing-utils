@@ -1273,8 +1273,8 @@ void che_show_search_dlg(GtkWidget *widget)
 void che_show_about_dlg(GtkWidget *widget)
 {
 	const char *authors[] = {
-		"(2005) Kanru Chen <kanru.96@stu.csie.ncnu.edu.tw>",
-		"(2012) Timothy Lin <lzh9102@gmail.com>",
+		"Kan-Ru Chen <kanru@kanru.info>",
+		"Timothy Lin <lzh9102@gmail.com>",
 		NULL };
 
 	GtkAboutDialog *dialog = gtk_about_dialog_new();
@@ -1284,7 +1284,7 @@ void che_show_about_dlg(GtkWidget *widget)
 	gtk_about_dialog_set_version(dialog, "2.1");
 	gtk_about_dialog_set_comments(dialog, "編輯新酷音(libchewing 1.3.x)的二進位詞庫\n"
 	                                      "使用者詞庫位於~/.chewing/uhash.dat");
-	gtk_about_dialog_set_website(dialog, "http://code.google.com/p/chewing-hash-editor");
+	gtk_about_dialog_set_website(dialog, "http://chewing.csie.net/");
 	gtk_about_dialog_set_website_label(dialog, "開啟專案首頁");
 
 	gtk_window_set_modal(GTK_WINDOW(dialog), TRUE);
