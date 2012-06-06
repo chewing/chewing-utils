@@ -1,0 +1,12 @@
+hash-editor - Chewing user database editor
+
+This program can add, modify and remove entries in the libchewing user
+database (usually located at ~/.chewing/uhash.dat).
+
+Requires:
+	gtk+-2.0
+
+Build and run:
+	$ make
+	$ cd src
+	$ ./che
