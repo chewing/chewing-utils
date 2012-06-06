@@ -11,19 +11,6 @@ static char *hashfilename;
 
 GtkWidget *main_window;
 
-const char *get_hash_filename()
-{
-	static char *filename = NULL;
-	const char hashfile[] = "/.chewing/uhash.dat";
-	if (!filename) {
-		const char *home = getenv("HOME");
-		filename = malloc(strlen(home) + sizeof(hashfile) + 1);
-		strcpy(filename, home);
-		strcat(filename, hashfile);
-	}
-	return filename;
-}
-
 int main(int argc, char *argv[])
 {
   GtkWidget *menu;
