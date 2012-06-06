@@ -2,6 +2,13 @@
 #include <stdio.h>
 #include <string.h>
 
+/* FIXME: use portable description */
+#define CHEWING_HASH_PATH ".chewing"
+#define PLAT_SEPARATOR "/"
+#define HASH_FILE  "uhash.dat"
+
+static char *hashfilename;
+
 GtkWidget *main_window;
 
 const char *get_hash_filename()
@@ -54,10 +61,23 @@ int main(int argc, char *argv[])
 
   is_file_saved = FALSE;
 
-  if (argc >= 2)
+  if (argc > 1)
     che_read_hash(argv[1]);
-  else
-    che_read_hash(get_hash_filename());
+  else {
+    if (getenv("HOME")) {
+      hashfilename = g_strdup_printf("%s%s", getenv("HOME"),
+                         PLAT_SEPARATOR CHEWING_HASH_PATH
+                         PLAT_SEPARATOR HASH_FILE);
+      /* writable uhash? */
+      if (access(hashfilename, W_OK) != 0) {
+        /* specify another uhash */
+        g_free(hashfilename);
+        file_open(main_window);
+      }
+    }
+    che_read_hash(hashfilename);
+    g_free(hashfilename);
+  }
 
   gtk_widget_show_all( main_window );
   gtk_main();
@@ -544,11 +564,8 @@ file_open( GtkWindow *parient )
 
   if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT)
     {
-	   gchar *filename;
       gtk_tree_store_clear( store );
-      filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
-      che_read_hash(filename);
-		g_free(filename);
+      hashfilename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
     }
 
   gtk_widget_destroy (dialog);
@@ -1344,18 +1361,18 @@ void che_show_search_dlg(GtkWidget *widget)
 void che_show_about_dlg(GtkWidget *widget)
 {
 	const char *authors[] = {
-		"(2005) Kanru Chen <kanru.96@stu.csie.ncnu.edu.tw>",
-		"(2012) Timothy Lin <lzh9102@gmail.com>",
+		"Kan-Ru Chen <kanru@kanru.info>",
+		"Timothy Lin <lzh9102@gmail.com>",
 		NULL };
 
 	GtkAboutDialog *dialog = gtk_about_dialog_new();
 
-	gtk_about_dialog_set_program_name(dialog, "新注音詞庫編輯器");
+	gtk_about_dialog_set_program_name(dialog, "新酷音詞庫編輯器");
 	gtk_about_dialog_set_authors(dialog, authors);
 	gtk_about_dialog_set_version(dialog, "2.1");
 	gtk_about_dialog_set_comments(dialog, "編輯新酷音(libchewing 1.3.x)的二進位詞庫\n"
 	                                      "使用者詞庫位於~/.chewing/uhash.dat");
-	gtk_about_dialog_set_website(dialog, "http://code.google.com/p/chewing-hash-editor");
+	gtk_about_dialog_set_website(dialog, "http://chewing.csie.net/");
 	gtk_about_dialog_set_website_label(dialog, "開啟專案首頁");
 
 	gtk_window_set_modal(GTK_WINDOW(dialog), TRUE);
