@@ -694,22 +694,38 @@ file_save_bin( gchar *fname )
 void
 file_save( gchar *fname )
 {
+	const char tmp_suffix[] = ".tmp";
+	char *tmp_filename;
+
+	if (fname)
+		strcpy(current_filename, fname);
+
+	/* write to <current_filename>.tmp */
+	tmp_filename = malloc(strlen(current_filename) + sizeof(tmp_suffix) + 1);
+	sprintf(tmp_filename, "%s%s", current_filename, tmp_suffix);
+
 #ifdef ENABLE_TEXT_HASH
 	switch (che_get_hash_format())
 	{
 	case HF_TEXT:
-		file_save_txt(fname);
+		file_save_txt(tmp_filename);
 		break;
 	case HF_BINARY:
-		file_save_bin(fname);
+		file_save_bin(tmp_filename);
 		break;
 	}
 #else
-	file_save_bin(fname); /* always save as binary hash */
+	file_save_bin(tmp_filename); /* always save as binary hash */
 #endif
-	is_file_saved = TRUE;
-	if (fname)
-		strcpy(current_filename, fname);
+
+	/* when done, replace <current_filename> with <current_filename>.tmp */
+	if (rename(tmp_filename, current_filename) != 0) {
+		fprintf(stderr, "error: failed to save file to %s\n", current_filename);
+	} else {
+		is_file_saved = TRUE;
+	}
+
+	free(tmp_filename);
 }
 
 /* export the database to a text file */
