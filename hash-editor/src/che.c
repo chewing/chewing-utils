@@ -19,9 +19,7 @@ int main(int argc, char *argv[])
   GtkWidget *vbox;
 
   /* load zhuin dictionary */
-  zhuin_dictionary = zhuindict_loadfromfile(ZHUIN_DICTIONARY_FILE );
-  if (!zhuin_dictionary)
-    printf("WARNING: failed to load the zhuin database \"%s\"\n", ZHUIN_DICTIONARY_FILE);
+  zhuin_dictionary = zhuindict_load_default_dict();
 
   gtk_init(&argc, &argv);
 

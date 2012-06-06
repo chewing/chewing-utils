@@ -11,6 +11,9 @@ struct entry
 	char *p_zhuin;
 };
 
+/* include default zhuin dictionary */
+#include "zhuin_data.h"
+
 struct zhuindict
 {
 	struct entry *arr;
@@ -119,6 +122,20 @@ zhuindict_loadfromfile(const char *filename)
 		zhuindict_addentry(ptr, charbuf, zhuinbuf);
 	zhuindict_sort(ptr);
 
+	return ptr;
+}
+
+struct zhuindict*
+zhuindict_load_default_dict()
+{
+	int i;
+	struct entry *p_entry = default_data;
+	struct zhuindict *ptr = zhuindict_new();
+	for (i=0; i<default_data_len; i++) {
+		zhuindict_addentry(ptr, p_entry->p_char, p_entry->p_zhuin);
+		++p_entry;
+	}
+	zhuindict_sort(ptr);
 	return ptr;
 }
 
