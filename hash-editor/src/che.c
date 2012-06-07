@@ -1085,6 +1085,8 @@ void che_save_phrase(GtkWidget *obj, gpointer vbox)
 
   GList *hboxes = gtk_container_get_children(GTK_CONTAINER(box));
   hboxes = g_list_first(hboxes);
+  if (!hboxes)
+	  return;
   memset(phrase, '\0', sizeof(phrase));
   memset(zuin, '\0', sizeof(zuin));
   do
