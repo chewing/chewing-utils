@@ -1,5 +1,6 @@
 /* Compile zhuin.txt into C header file */
 #include <stdio.h>
+#include "key2pho-utf8.h"
 
 int main()
 {
@@ -20,7 +21,7 @@ int main()
 	fprintf(fout, "static const struct entry default_data[] = {\n");
 
 	while (fscanf(fin, "%s %s", charbuf, zhuinbuf) != EOF) {
-		fprintf(fout, "\t{\"%s\", \"%s\"},\n", charbuf, zhuinbuf);
+		fprintf(fout, "\t{\"%s\", %d},\n", charbuf, zhuin_to_inx(zhuinbuf));
 		++count;
 	}
 

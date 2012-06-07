@@ -1039,6 +1039,7 @@ void entry_active(GtkWidget *obj, gpointer vbox, const char *zhuin)
 {
   int i, length;
   char *chr_zhuin;
+  char zhuin_buffer[10];
   GtkWidget *box = vbox;
   GtkWidget *bl;
   gchar buf[4];
@@ -1053,9 +1054,11 @@ void entry_active(GtkWidget *obj, gpointer vbox, const char *zhuin)
     chr_zhuin = "      ";
   for(i = 0; i < length; i++) {
     chewing_utf8_strncpy(buf, chewing_utf8_strseek(text, i), 1, 1);
-    if (zhuin_dictionary) { /* try to find the zhuin for the chinese character */
-      chr_zhuin = find_zhuin(zhuin_dictionary, buf);
-      if (!chr_zhuin) chr_zhuin = "      ";
+	 /* try to find the zhuin for the chinese character */
+    if (zhuin_dictionary && find_zhuin(zhuin_dictionary, buf, zhuin_buffer)) {
+    	chr_zhuin = zhuin_buffer;
+    } else {
+      chr_zhuin = "      ";
     }
     bl = che_new_label_button_box(buf, chr_zhuin);
     gtk_widget_show_all(GTK_WIDGET(bl));

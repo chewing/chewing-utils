@@ -1,14 +1,16 @@
-#include "zhuindict.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdint.h>
+#include "zhuindict.h"
+#include "key2pho-utf8.h"
 
 #define INIT_CAPACITY 32
 
 struct entry
 {
 	char *p_char;
-	char *p_zhuin;
+	uint16_t zhuin; /* zhuin number obtained from zhuin_to_inx */
 };
 
 /* include default zhuin dictionary */
@@ -50,8 +52,6 @@ entryarr_free(struct entry *ptr, int len)
 		for (i=0; i<len; i++) {
 			if (ptr[i].p_char)
 				free(ptr[i].p_char);
-			if (ptr[i].p_zhuin)
-				free(ptr[i].p_zhuin);
 		}
 		free(ptr);
 	}
@@ -79,7 +79,21 @@ zhuindict_addentry(struct zhuindict *ptr, const char *c, const char *z)
 	}
 	e = &ptr->arr[ptr->size];
 	e->p_char = strdup(c);
-	e->p_zhuin = strdup(z);
+	e->zhuin = zhuin_to_inx(z);
+	ptr->size++;
+}
+
+static void
+zhuindict_addentry_idx(struct zhuindict *ptr, const char *c, uint16_t zhuin)
+{
+	struct entry *e;
+	if (ptr->size == ptr->capacity) { /* extend capacity */
+		ptr->arr = entryarr_realloc(ptr->arr, ptr->capacity << 1);
+		ptr->capacity <<= 1;
+	}
+	e = &ptr->arr[ptr->size];
+	e->p_char = strdup(c);
+	e->zhuin = zhuin;
 	ptr->size++;
 }
 
@@ -96,7 +110,6 @@ zhuindict_search(struct zhuindict *ptr, const char *s)
 {
 	struct entry cmp;
 	cmp.p_char = (char*)s;
-	cmp.p_zhuin = NULL;
 	return bsearch(&cmp, ptr->arr, ptr->size, sizeof(struct entry), entry_compare);
 }
 
@@ -132,16 +145,22 @@ zhuindict_load_default_dict()
 	struct entry *p_entry = default_data;
 	struct zhuindict *ptr = zhuindict_new();
 	for (i=0; i<default_data_len; i++) {
-		zhuindict_addentry(ptr, p_entry->p_char, p_entry->p_zhuin);
+		zhuindict_addentry_idx(ptr, p_entry->p_char, p_entry->zhuin);
 		++p_entry;
 	}
 	zhuindict_sort(ptr);
 	return ptr;
 }
 
-const char*
-find_zhuin(struct zhuindict* dict, const char *s)
+int
+find_zhuin(struct zhuindict* dict, const char *s, char *buffer)
 {
 	struct entry *e = zhuindict_search(dict, s);
-	return e ? e->p_zhuin : NULL;
+	if (e) {
+		*buffer = 0;
+		Uint2PhoneUTF8(buffer, e->zhuin);
+		return 1;
+	} else {
+		return 0;
+	}
 }

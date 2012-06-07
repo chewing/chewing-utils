@@ -12,8 +12,9 @@ zhuindict.o: zhuindict.c zhuindict.h zhuin_data.h
 zhuin_data.h: zhuindict_compile
 	./zhuindict_compile
 
-zhuindict_compile: zhuindict_compile.c
-	gcc -o zhuindict_compile zhuindict_compile.c
+zhuindict_compile: zhuindict_compile.c key2pho-utf8.o chewing-utf8-util.o
+	gcc -o zhuindict_compile zhuindict_compile.c \
+		key2pho-utf8.o chewing-utf8-util.o
 
 %.o: %.c %.h
 	gcc $(CFLAGS) $(LIB_GTK) -c $*.c
