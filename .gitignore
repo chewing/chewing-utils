@@ -1,2 +1,4 @@
 *.o
 hash-editor/src/che
+hash-editor/src/zhuin_data.h
+hash-editor/src/zhuindict_compile
