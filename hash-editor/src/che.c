@@ -1,6 +1,7 @@
 #include "che.h"
 #include <stdio.h>
 #include <string.h>
+#include <unistd.h>
 
 /* FIXME: use portable description */
 #define CHEWING_HASH_PATH ".chewing"
