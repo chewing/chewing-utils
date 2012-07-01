@@ -1040,11 +1040,17 @@ void entry_active(GtkWidget *obj, gpointer vbox, const char *zhuin)
 {
   int i, length;
   char *chr_zhuin;
-  char zhuin_buffer[10];
   GtkWidget *box = vbox;
   GtkWidget *bl;
   gchar buf[4];
   gchar *text = gtk_entry_get_text(GTK_ENTRY(obj));
+  /*
+   the representation of Mandarin Phonetic Symbols consists of initial,
+   middle, fnal consonants (each occupies 3 bytes in UTF-8), and tone 
+   (2 bytes in UTF-8).  Therefore, we declare 11 bytes in zhuin_buffer.
+   */
+  char zhuin_buffer[3 * 3 + 2 + 1];
+
   length = chewing_utf8_strlen(text);
 
   gtk_container_foreach(GTK_CONTAINER(box), gtk_widget_destroy, NULL);
