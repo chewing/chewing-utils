@@ -9,6 +9,10 @@ all: $(TARGET)
 $(TARGET): $(TARGET).o $(UTF8_OBJS) zhuindict.o
 	$(CC) $(TARGET).o $(UTF8_OBJS) zhuindict.o -o $(TARGET) $(LIB_GTK)
 
+che.o: che.c che.h
+	awk '/@/{print "  \"" $$_ "\"," }' ../../AUTHORS | \
+	$(CC) $(CFLAGS) $(LIB_GTK) -c $*.c
+
 zhuindict.o: zhuindict.c zhuindict.h zhuin_data.h
 	$(CC) $(CFLAGS) -c zhuindict.c
 

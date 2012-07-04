@@ -1360,9 +1360,9 @@ void che_show_search_dlg(GtkWidget *widget)
 
 void che_show_about_dlg(GtkWidget *widget)
 {
+	/* Author list is obtained from build system. */
 	const char *authors[] = {
-		"Kan-Ru Chen <kanru@kanru.info>",
-		"Timothy Lin <lzh9102@gmail.com>",
+#include "/dev/stdin"
 		NULL };
 
 	GtkAboutDialog *dialog = gtk_about_dialog_new();
