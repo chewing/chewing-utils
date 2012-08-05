@@ -837,6 +837,7 @@ che_select_prev_phrase()
 	if (path && gtk_tree_path_prev(path)) {
 		gtk_tree_model_get_iter(store, &iter, path);
 		gtk_tree_selection_select_iter(selection, &iter);
+		che_select_row(&iter);
 	}
 	gtk_tree_path_free(path);
 }
@@ -849,8 +850,10 @@ che_select_next_phrase()
 				  &iter);
 	if (valid) {
 		valid = gtk_tree_model_iter_next(GTK_TREE_MODEL(store), &iter);
-		if (valid)
+		if (valid) {
 			gtk_tree_selection_select_iter(selection, &iter); /* select the next item */
+			che_select_row(&iter);
+		}
 	}
 }
 
