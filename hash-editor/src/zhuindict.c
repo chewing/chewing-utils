@@ -142,7 +142,7 @@ struct zhuindict*
 zhuindict_load_default_dict()
 {
 	int i;
-	struct entry *p_entry = default_data;
+	const struct entry *p_entry = default_data;
 	struct zhuindict *ptr = zhuindict_new();
 	for (i=0; i<default_data_len; i++) {
 		zhuindict_addentry_idx(ptr, p_entry->p_char, p_entry->zhuin);

@@ -23,39 +23,3 @@ enum {
 	ORIGFREQ_COLUMN,
 	N_COLUMNS
 };
-
-GtkTreeStore *store;
-GtkTreeIter iter;
-gboolean is_editing_existing_phrase;
-GtkTreeSelection *selection;
-GtkTreeView *main_tree_view;
-gchar current_filename[1024];
-GtkWidget *editor_dialog;
-GtkWidget *search_dialog;
-
-GtkWidget *che_create_tree( GtkWindow* );
-GtkWidget *che_create_menu( GtkWindow* );
-void che_read_hash(gchar *filename);
-void convert(char*, char*, int);
-void che_select_prev_phrase();
-void che_select_next_phrase();
-
-struct zhuindict *zhuin_dictionary;
-
-gboolean is_file_saved;
-gchar prev_search_text[0xff] = {};
-uint32_t chewing_lifetime = 0;
-
-/* callback */
-void che_quit(GtkWindow*);
-void file_open( GtkWindow* );
-void file_save_as( GtkWindow* );
-void file_save( gchar* );
-void file_export(void*);
-void file_import(void*);
-void cell_edited(GtkCellRendererText *cellrenderertext, gchar *arg1, gchar *arg2, gpointer column);
-void che_new_phrase_dlg( GtkWidget* );
-void che_save_phrase(GtkWidget *obj, gpointer vbox);
-void che_remove_phrase(GtkWidget *menu);
-void che_show_search_dlg(GtkWidget *widget);
-void che_show_about_dlg(GtkWidget *widget);
