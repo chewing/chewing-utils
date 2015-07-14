@@ -1,9 +1,10 @@
 //#include "global.h"
 //#include "zhuin.h"
 #include "chewing-utf8-util.h"
+#include "key2pho-utf8.h"
 #include <string.h>
 
-const char *zhuin_tab[] = {
+static const char *zhuin_tab[] = {
   "ㄅㄆㄇㄈㄉㄊㄋㄌㄍㄎㄏㄐㄑㄒㄓㄔㄕㄖㄗㄘㄙ",
   "ㄧㄨㄩ",
   "ㄚㄛㄜㄝㄞㄟㄠㄡㄢㄣㄤㄥㄦ",
@@ -13,7 +14,7 @@ static const int zhuin_tab_num[] = {
   22, 4, 14, 6
 };
 static const int shift[] = { 9, 7, 3, 0 };
-const static int sb[] = { 31, 3, 15, 7 };
+static const int sb[] = { 31, 3, 15, 7 };
 
 //static const char *ph_str =
 //"ㄅㄆㄇㄈㄉㄊㄋㄌㄍㄎㄏㄐㄑㄒㄓㄔㄕㄖㄗㄘㄙㄧㄨㄩㄚㄛㄜㄝㄞㄟㄠㄡㄢㄣㄤㄥㄦ˙ˊˇˋ" ;
@@ -33,16 +34,16 @@ const static int sb[] = { 31, 3, 15, 7 };
 /* Read one zhuin string,
    return the number it means */
 int
-zhuin_to_inx( char *zhuin )
+zhuin_to_inx(const char *zhuin)
 {
-  char *iter = zhuin, *pos;
+  const char *iter = zhuin, *pos;
   char buf[4];
   int len, result = 0;
   int i;
-  
-  /* Here the constant 4 is the number 
+
+  /* Here the constant 4 is the number
      of zhuin_tab and zhuin_tab_num */
-/*  for( i = 0; i < 3; i++ ) */
+  /*  for( i = 0; i < 3; i++ ) */
   for( i = 0; i < 4; i++ )
     {
       len = chewing_utf8_byte2len( iter[0] );
@@ -60,17 +61,35 @@ zhuin_to_inx( char *zhuin )
   return result;
 }
 
+int Uint2PhoneUTF8(char *phone, long seq)
+{
+    int i, j, k;
+    const char *pos;
+    char buffer[5];
+    for ( i = 0, j = 0; i < 4; i++) {
+        k = ((seq >> shift[ i ]) & sb[ i ] ) - 1;
+        if ( k >= 0 && (pos = chewing_utf8_strseek( zhuin_tab[ i ], k )) )
+        {
+            chewing_utf8_strncpy(buffer, pos, 1, 1);
+            strcat(phone, buffer);
+            j++;
+        }
+    }
+    return j;
+}
+
+#if 0
 /* Read one zhuin string,
    return the number of tones*/
-int
-zhuin_to_tone( char *zhuin )
+static int
+zhuin_to_tone(const char *zhuin)
 {
   char *iter = zhuin, *pos = 0;
   char buf[4];
   int len, result = 0;
   int i;
-  
-  /* Here the constant 4 is the number 
+
+  /* Here the constant 4 is the number
      of zhuin_tab and zhuin_tab_num */
   for( i = 0; i < 4; i++ )
     {
@@ -88,24 +107,6 @@ zhuin_to_tone( char *zhuin )
   return result;
 }
 
-int Uint2PhoneUTF8( char *phone, long seq )
-{
-    int i, j, k;
-    char *pos;
-    char buffer[5];
-    for ( i = 0, j = 0; i < 4; i++) {
-        k = ((seq >> shift[ i ]) & sb[ i ] ) - 1;
-        if ( k >= 0 && (pos = chewing_utf8_strseek( zhuin_tab[ i ], k )) )
-        {
-            chewing_utf8_strncpy(buffer, pos, 1, 1);
-            strcat(phone, buffer);
-            j++;
-        }
-    }
-    return j;
-}
-
-#if 0
 int Key2PhoneInxUTF8( int key, int type, int kbtype, int searchTimes )
 {
 	char keyStr[ 5 ], bgStr[ 10 ], *p;
@@ -136,9 +137,9 @@ int Key2PhoUTF8( char *pho, const char *inputkey, int kbtype, int searchTimes )
 		char *findptr = NULL;
 		int index;
 
-		for ( 
-			s = 0, pTarget = key_str[ kbtype ]; 
-			s < searchTimes; 
+		for (
+			s = 0, pTarget = key_str[ kbtype ];
+			s < searchTimes;
 			s++, pTarget = findptr + 1 ) {
 			findptr = strchr( pTarget, inputkey[ i ] );
 			if ( ! findptr ) {

@@ -1,8 +1,8 @@
 #include "key2pho8.h"
 
-const static int shift[] = { 9, 7, 3, 0 };
-const static int sb[] = { 31, 3, 15, 7 };
-const char *ph_pho[] = {				/* number of bits */
+static const int shift[] = { 9, 7, 3, 0 };
+static const int sb[] = { 31, 3, 15, 7 };
+static const char *ph_pho[] = {			/* number of bits */
 	"  ㄅㄆㄇㄈㄉㄊㄋㄌㄍㄎㄏㄐㄑㄒㄓㄔㄕㄖㄗㄘㄙ",	/* 5 */
 	"  ㄧㄨㄩ",					/* 2 */
 	"  ㄚㄛㄜㄝㄞㄟㄠㄡㄢㄣㄤㄥㄦ",			/* 4 */
